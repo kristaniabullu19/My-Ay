@@ -1,0 +1,13 @@
+Taruh file foto-foto kenangan kalian di folder ini!
+Contoh:
+- foto1.jpg
+- foto2.jpg
+- foto3.jpg
+- foto4.jpg
+- foto5.jpg
+- foto6.jpg
+
+Lalu di index.html, kamu tinggal mengganti sumber gambarnya menjadi:
+src="images/foto1.jpg"
+dst.
+Saat di-hosting (di Vercel, Netlify, atau GitHub Pages), folder ini otomatis ikut ter-upload sehingga foto-foto pasti langsung muncul di HP dia!
