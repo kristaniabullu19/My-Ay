@@ -1,13 +1,33 @@
-Taruh file foto-foto kenangan kalian di folder ini!
-Contoh:
-- foto1.jpg
-- foto2.jpg
-- foto3.jpg
-- foto4.jpg
-- foto5.jpg
-- foto6.jpg
+PANDUAN MENARUH FOTO & VIDEO KENANGAN:
+Taruh file foto & video kenangan kalian di folder ini (images/) atau langsung di folder utama My_Ay:
 
-Lalu di index.html, kamu tinggal mengganti sumber gambarnya menjadi:
-src="images/foto1.jpg"
-dst.
-Saat di-hosting (di Vercel, Netlify, atau GitHub Pages), folder ini otomatis ikut ter-upload sehingga foto-foto pasti langsung muncul di HP dia!
+====================================
+1. KATEGORI PDKT (FOTO MASA PENDEKATAN)
+====================================
+- pdkt1.jpg
+- pdkt2.jpg
+- pdkt3.jpg
+- pdkt4.jpg
+(Atau: foto1.jpg, foto2.jpg, foto3.jpg juga otomatis didukung sebagai cadangan)
+
+====================================
+2. KATEGORI OFFICIAL (FOTO RESMI JADIAN & PACARAN)
+====================================
+- official1.jpg  (Contoh: Foto saat di Bang Awal atau hari jadian)
+- official2.jpg
+- official3.jpg
+- official4.jpg
+(Atau: foto4.jpg, foto5.jpg, dst. juga otomatis didukung sebagai cadangan)
+
+====================================
+3. KATEGORI VIDEO (1 VIDEO KENANGAN - BISA FULL LAYAR)
+====================================
+- video.mp4
+(Taruh file video kenanganmu dengan nama: video.mp4 di folder images/ atau folder My_Ay)
+Video ini bisa ditonton dengan suara dan tombol FULL SCREEN (layar penuh)!
+
+====================================
+CATATAN HOSTING (VERCEL / NETLIFY / GITHUB PAGES):
+====================================
+Saat file-file ini ditaruh di folder images/, ketika kamu hosting project ini ke internet,
+semua foto dan video otomatis ikut ter-upload dan langsung muncul di HP pasangan kamu!
