@@ -28,8 +28,6 @@
         href="https://fonts.googleapis.com/css2?family=Pricedown&family=Changa+One&family=Roboto:wght@400;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Canvas Confetti Library for Birthday Explosion -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -100,24 +98,6 @@
         .animate-slide-right {
             animation: slideInFromRight 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-
-        /* Explosion Shockwave Keyframe */
-        @keyframes shockwaveExpand {
-            0% {
-                transform: translate(-50%, -50%) scale(0.05);
-                opacity: 1;
-                border-width: 10px;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(3.5);
-                opacity: 0;
-                border-width: 1px;
-            }
-        }
-
-        .animate-shockwave {
-            animation: shockwaveExpand 0.9s cubic-bezier(0.1, 0.8, 0.25, 1) forwards;
-        }
     </style>
 </head>
 
@@ -187,26 +167,14 @@
         </div>
     </div>
 
-    <!-- EXPLOSION OVERLAY (EFEK LEDUPAN LANGSUNG SAAT MASUK KE MENU BERANDA) -->
-    <div id="explosionOverlay" class="fixed inset-0 pointer-events-none z-50 overflow-hidden hidden select-none">
-        <!-- Flash Overlay (White-out flash on explosion) -->
-        <div id="explosionFlash" class="absolute inset-0 bg-white opacity-0 transition-opacity duration-300"></div>
-
-        <!-- Expanding Shockwave Ring -->
-        <div id="explosionShockwave" class="absolute top-1/2 left-1/2 rounded-full border-orange-400 w-[300px] h-[300px] opacity-0 pointer-events-none"></div>
-
-        <!-- Celebration Canvas for Confetti & Particle Sparks -->
-        <canvas id="explosionCanvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
-    </div>
-
     <!-- STAGE 5: IN-GAME PAUSE MENU (GTA V EXACT LAYOUT) -->
     <div id="stage5"
         class="fixed inset-0 z-10 hidden overflow-y-auto bg-cover bg-center bg-fixed scroll-smooth pb-24 select-text"
-        style="background-image: linear-gradient(to bottom, rgba(10, 15, 30, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%), url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1920&q=80');">
+        style="background-image: url('images/background.jpg');">
 
         <!-- SECTION 1: HERO MISSION CARD (GTA PAUSE MENU TOP BAR & NAV) -->
         <section id="hero-mission-card"
-            class="w-full min-h-screen flex flex-col justify-between bg-black/85 backdrop-blur-xl border-b border-gray-800">
+            class="w-full min-h-screen flex flex-col justify-between bg-black/30 border-b border-gray-800/20">
 
             <!-- Top Header Navbar -->
             <div
@@ -259,10 +227,10 @@
                                 class="w-80 h-80 rounded-full border-4 border-dashed border-gtaPinkLight/30 animate-spin-slow">
                             </div>
                             <div
-                                class="absolute w-56 h-56 rounded-full border-2 border-gtaPinkLight/50 bg-gtaNavyLight/90 glow-box flex flex-col items-center justify-center p-4 text-center">
+                                class="absolute w-56 h-56 rounded-full border-2 border-gtaPinkLight/50 bg-gtaNavyLight/80 backdrop-blur-md glow-box flex flex-col items-center justify-center p-4 text-center">
                                 <i class="fa-solid fa-compact-disc text-3xl text-gtaPinkLight mb-2 animate-spin"></i>
                                 <h3 id="current-station-title" class="gta-font font-bold text-sm text-white">PILIH LAGU
-                                    DULU BANK</h3>
+                                    DULU BANG</h3>
                                 <p id="current-station-desc" class="text-[10px] text-gray-300 mt-1">pencet saja sesuai
                                     dengan selera karu ya</p>
                             </div>
@@ -375,6 +343,7 @@
                         </p>
                         <p class="text-sm text-gray-300 leading-relaxed mb-4">
                             Dari Ay kamu 💛💛💛
+                            I LOVE Uuuuuuuu
                         </p>
                     </div>
                 </div>
@@ -495,10 +464,10 @@
                     </div>
                 </div>
 
-    </div>
+            </div>
 
 
-    </section>
+        </section>
     </div>
 
     <!-- LIGHTBOX MODAL (Untuk Foto Profil & Foto Galeri) -->
@@ -542,12 +511,10 @@
                 if (progress >= 100) {
                     clearInterval(interval);
                     setTimeout(() => {
-                        // Selesai LOADING SCREEN -> langsung ke menu beranda dan terjadi LEDUPAN!
                         document.getElementById('stage4').classList.add('hidden');
                         document.getElementById('stage5').classList.remove('hidden');
                         switchGtaTab('radio');
-                        triggerArrivalExplosion();
-                    }, 400);
+                    }, 500);
                 }
             }, 50);
         }
@@ -624,332 +591,6 @@
                 switchGtaTab(gtaTabs[currentTabIndex]);
             }
         });
-
-        /* =========================================================
-           WEB AUDIO API SOUND ENGINE: EFEK SUARA LETUSAN SURPRISE
-           ========================================================= */
-        let audioCtx = null;
-        function getAudioContext() {
-            try {
-                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                if (!audioCtx && AudioContextClass) {
-                    audioCtx = new AudioContextClass();
-                }
-                if (audioCtx && audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-            } catch (err) {
-                console.warn('AudioContext not supported or blocked:', err);
-            }
-            return audioCtx;
-        }
-
-        // Buka kunci AudioContext pada interaksi awal pengguna
-        ['click', 'touchstart', 'pointerdown', 'keydown'].forEach(evt => {
-            document.addEventListener(evt, () => {
-                getAudioContext();
-            }, { once: false });
-        });
-
-        // Fungsi memainkan suara letusan party popper / petasan pesta yang menggelegar
-        function playSurpriseExplosionSound() {
-            const ctx = getAudioContext();
-            if (!ctx) return;
-
-            const now = ctx.currentTime;
-
-            // 1. Buffer White Noise untuk letusan & semburan udara
-            const sampleRate = ctx.sampleRate;
-            const bufferLen = sampleRate * 1.5;
-            const noiseBuffer = ctx.createBuffer(1, bufferLen, sampleRate);
-            const data = noiseBuffer.getChannelData(0);
-            for (let i = 0; i < bufferLen; i++) {
-                data[i] = Math.random() * 2 - 1;
-            }
-
-            // 2. MAIN BASS THUMP (Hantaman bass getaran letusan)
-            const bassOsc = ctx.createOscillator();
-            const bassGain = ctx.createGain();
-            bassOsc.type = 'sine';
-            bassOsc.frequency.setValueAtTime(280, now);
-            bassOsc.frequency.exponentialRampToValueAtTime(32, now + 0.35);
-
-            bassGain.gain.setValueAtTime(1.2, now);
-            bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
-
-            bassOsc.connect(bassGain);
-            bassGain.connect(ctx.destination);
-            bassOsc.start(now);
-            bassOsc.stop(now + 0.65);
-
-            // 3. SHARP TRANSIENT POP / CRACK (Letusan selongsong confetti awal)
-            const popSrc = ctx.createBufferSource();
-            popSrc.buffer = noiseBuffer;
-            const popFilter = ctx.createBiquadFilter();
-            popFilter.type = 'highpass';
-            popFilter.frequency.setValueAtTime(1600, now);
-
-            const popGain = ctx.createGain();
-            popGain.gain.setValueAtTime(1.4, now);
-            popGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-
-            popSrc.connect(popFilter);
-            popFilter.connect(popGain);
-            popGain.connect(ctx.destination);
-            popSrc.start(now);
-            popSrc.stop(now + 0.06);
-
-            // 4. LOWPASS ROAR BODY (Gemuruh udara & confetti meluncur)
-            const roarSrc = ctx.createBufferSource();
-            roarSrc.buffer = noiseBuffer;
-            const roarFilter = ctx.createBiquadFilter();
-            roarFilter.type = 'lowpass';
-            roarFilter.frequency.setValueAtTime(1800, now);
-            roarFilter.frequency.exponentialRampToValueAtTime(70, now + 0.8);
-            roarFilter.Q.setValueAtTime(3.0, now);
-
-            const roarGain = ctx.createGain();
-            roarGain.gain.setValueAtTime(1.0, now);
-            roarGain.gain.exponentialRampToValueAtTime(0.01, now + 0.85);
-
-            roarSrc.connect(roarFilter);
-            roarFilter.connect(roarGain);
-            roarGain.connect(ctx.destination);
-            roarSrc.start(now);
-            roarSrc.stop(now + 0.9);
-
-            // 5. STAGGERED MINI-POPS (Letusan beruntun kembang api pesta)
-            const miniDelays = [0.12, 0.24, 0.40, 0.60];
-            miniDelays.forEach((delay, idx) => {
-                const popTime = now + delay;
-                const mSrc = ctx.createBufferSource();
-                mSrc.buffer = noiseBuffer;
-                const mFilter = ctx.createBiquadFilter();
-                mFilter.type = 'bandpass';
-                mFilter.frequency.setValueAtTime(800 + Math.random() * 800, popTime);
-                mFilter.Q.setValueAtTime(2.5, popTime);
-
-                const mGain = ctx.createGain();
-                mGain.gain.setValueAtTime(0.6 / (idx + 1), popTime);
-                mGain.gain.exponentialRampToValueAtTime(0.001, popTime + 0.16);
-
-                if (ctx.createStereoPanner) {
-                    const panner = ctx.createStereoPanner();
-                    panner.pan.setValueAtTime((Math.random() * 1.6) - 0.8, popTime);
-                    mSrc.connect(mFilter);
-                    mFilter.connect(mGain);
-                    mGain.connect(panner);
-                    panner.connect(ctx.destination);
-                } else {
-                    mSrc.connect(mFilter);
-                    mFilter.connect(mGain);
-                    mGain.connect(ctx.destination);
-                }
-
-                mSrc.start(popTime);
-                mSrc.stop(popTime + 0.2);
-            });
-
-            // 6. JOYFUL CELEBRATION CHIMES (Nada ceria ulang tahun)
-            const notes = [1046.50, 1318.51, 1567.98, 2093.00];
-            notes.forEach((freq, i) => {
-                const chimeTime = now + 0.2 + (i * 0.09);
-                const chimeOsc = ctx.createOscillator();
-                const chimeGain = ctx.createGain();
-                chimeOsc.type = 'sine';
-                chimeOsc.frequency.setValueAtTime(freq, chimeTime);
-
-                chimeGain.gain.setValueAtTime(0.25, chimeTime);
-                chimeGain.gain.exponentialRampToValueAtTime(0.001, chimeTime + 0.5);
-
-                chimeOsc.connect(chimeGain);
-                chimeGain.connect(ctx.destination);
-                chimeOsc.start(chimeTime);
-                chimeOsc.stop(chimeTime + 0.55);
-            });
-        }
-
-        /* =========================================================
-           CANVAS PARTICLE ENGINE: EFEK LEDUPAN PARTIKEL & SHOCKWAVE
-           ========================================================= */
-        let explosionParticles = [];
-        let explosionAnimFrameId = null;
-
-        function initExplosionCanvas() {
-            const canvas = document.getElementById('explosionCanvas');
-            if (!canvas) return null;
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            return canvas;
-        }
-
-        window.addEventListener('resize', () => {
-            const canvas = document.getElementById('explosionCanvas');
-            const overlay = document.getElementById('explosionOverlay');
-            if (canvas && overlay && !overlay.classList.contains('hidden')) {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-        });
-
-        function spawnCanvasExplosion() {
-            const canvas = initExplosionCanvas();
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-
-            explosionParticles = [];
-            const colors = ['#f97316', '#eab308', '#ec4899', '#0ea5e9', '#84cc16', '#ffffff', '#a855f7'];
-
-            for (let i = 0; i < 150; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const speed = 5 + Math.random() * 18;
-                explosionParticles.push({
-                    x: centerX,
-                    y: centerY,
-                    vx: Math.cos(angle) * speed,
-                    vy: Math.sin(angle) * speed - (Math.random() * 4),
-                    size: 4 + Math.random() * 8,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    alpha: 1,
-                    decay: 0.008 + Math.random() * 0.015,
-                    rotation: Math.random() * 360,
-                    rotSpeed: (Math.random() - 0.5) * 15,
-                    shape: Math.random() > 0.5 ? 'rect' : 'circle'
-                });
-            }
-
-            if (explosionAnimFrameId) cancelAnimationFrame(explosionAnimFrameId);
-
-            function renderParticles() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                for (let i = explosionParticles.length - 1; i >= 0; i--) {
-                    const p = explosionParticles[i];
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.vy += 0.24; // gravitasi
-                    p.vx *= 0.985;
-                    p.vy *= 0.985;
-                    p.rotation += p.rotSpeed;
-                    p.alpha -= p.decay;
-
-                    if (p.alpha <= 0) {
-                        explosionParticles.splice(i, 1);
-                        continue;
-                    }
-
-                    ctx.save();
-                    ctx.globalAlpha = Math.max(0, p.alpha);
-                    ctx.fillStyle = p.color;
-                    ctx.translate(p.x, p.y);
-                    ctx.rotate((p.rotation * Math.PI) / 180);
-
-                    if (p.shape === 'rect') {
-                        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
-                    } else {
-                        ctx.beginPath();
-                        ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                    ctx.restore();
-                }
-
-                if (explosionParticles.length > 0) {
-                    explosionAnimFrameId = requestAnimationFrame(renderParticles);
-                } else {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    explosionAnimFrameId = null;
-                }
-            }
-
-            explosionAnimFrameId = requestAnimationFrame(renderParticles);
-        }
-
-        /* =========================================================
-           EFEK LEDUPAN SAAT MASUK KE MENU BERANDA
-           ========================================================= */
-        function triggerArrivalExplosion() {
-            const overlay = document.getElementById('explosionOverlay');
-            if (overlay) overlay.classList.remove('hidden');
-
-            // 1. Mainkan Suara Letusan Menggelegar
-            playSurpriseExplosionSound();
-
-            // 2. Efek Flash Layar Putih (Shock Flash)
-            const flash = document.getElementById('explosionFlash');
-            if (flash) {
-                flash.style.opacity = '0.85';
-                setTimeout(() => {
-                    flash.style.opacity = '0';
-                }, 160);
-            }
-
-            // 3. Efek Gelombang Ledakan (Shockwave Ring)
-            const shockwave = document.getElementById('explosionShockwave');
-            if (shockwave) {
-                shockwave.classList.remove('animate-shockwave');
-                void shockwave.offsetWidth; // trigger reflow
-                shockwave.classList.add('animate-shockwave');
-            }
-
-            // 4. Jalankan Partikel Canvas Bawaan
-            spawnCanvasExplosion();
-
-            // 5. Jalankan Multi-angle Confetti Cannons di atas Menu Beranda
-            if (typeof confetti === 'function') {
-                // Meriam tengah (360 derajat)
-                confetti({
-                    particleCount: 140,
-                    spread: 120,
-                    origin: { y: 0.55 },
-                    zIndex: 9999,
-                    colors: ['#f97316', '#eab308', '#f43f5e', '#0ea5e9', '#84cc16', '#ffffff']
-                });
-
-                // Meriam kiri bawah
-                setTimeout(() => {
-                    confetti({
-                        particleCount: 90,
-                        angle: 60,
-                        spread: 75,
-                        origin: { x: 0.05, y: 0.85 },
-                        zIndex: 9999,
-                        colors: ['#f97316', '#eab308', '#ec4899']
-                    });
-                }, 120);
-
-                // Meriam kanan bawah
-                setTimeout(() => {
-                    confetti({
-                        particleCount: 90,
-                        angle: 120,
-                        spread: 75,
-                        origin: { x: 0.95, y: 0.85 },
-                        zIndex: 9999,
-                        colors: ['#0ea5e9', '#84cc16', '#ffffff']
-                    });
-                }, 220);
-
-                // Letusan bintang emas kembang api tambahan
-                setTimeout(() => {
-                    confetti({
-                        particleCount: 70,
-                        spread: 100,
-                        origin: { y: 0.35 },
-                        shapes: ['star'],
-                        zIndex: 9999,
-                        colors: ['#facc15', '#f59e0b', '#fbbf24']
-                    });
-                }, 400);
-            }
-
-            // Sembunyikan overlay setelah ledakan selesai (3 detik)
-            setTimeout(() => {
-                if (overlay) overlay.classList.add('hidden');
-            }, 3000);
-        }
     </script>
 </body>
 
